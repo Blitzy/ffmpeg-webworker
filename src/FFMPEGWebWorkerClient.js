@@ -18,8 +18,15 @@ export default class FFMPEGWebworkerClient extends EventEmitter {
    */
   workerIsReady = false;
 
-  constructor() {
+  ffmpegPath =
+    "https://raw.githack.com/Girilloid/ffmpeg/master/ffmpeg-all-codecs.js";
+
+  constructor(ffmpegPath) {
     super();
+
+    if (ffmpegPath) {
+      this.ffmpegPath = ffmpegPath;
+    }
 
     this.initWebWorker();
   }
@@ -29,7 +36,7 @@ export default class FFMPEGWebworkerClient extends EventEmitter {
 
     this.log;
 
-    const log = (this.worker.onmessage = event => {
+    const log = (this.worker.onmessage = (event) => {
       let message = event.data;
 
       if (event && event.type) {
@@ -48,6 +55,8 @@ export default class FFMPEGWebworkerClient extends EventEmitter {
         }
       }
     });
+
+    this.worker.postMessage({ type: "load", ffmpegPath: this.ffmpegPath });
   }
 
   set worker(worker) {
@@ -75,15 +84,15 @@ export default class FFMPEGWebworkerClient extends EventEmitter {
    * @param {Blob} file
    * @return {Promise<ArrayBuffer>}
    */
-  readFileAsBufferArray = file => {
+  readFileAsBufferArray = (file) => {
     return new Promise((resolve, reject) => {
       let fileReader = new FileReader();
 
-      fileReader.onload = function() {
+      fileReader.onload = function () {
         resolve(this.result);
       };
 
-      fileReader.onerror = function() {
+      fileReader.onerror = function () {
         reject(this.error);
       };
 
@@ -124,7 +133,7 @@ export default class FFMPEGWebworkerClient extends EventEmitter {
     }
 
     if (this.inputFile && this.inputFile.type) {
-      this.convertInputFileToArrayBuffer().then(arrayBuffer => {
+      this.convertInputFileToArrayBuffer().then((arrayBuffer) => {
         while (!this.workerIsReady) {}
 
         const filename = `video-${Date.now()}.webm`;
@@ -135,18 +144,18 @@ export default class FFMPEGWebworkerClient extends EventEmitter {
           files: [
             {
               data: new Uint8Array(arrayBuffer),
-              name: filename
-            }
+              name: filename,
+            },
           ],
           totalMemory,
-          type: "command"
+          type: "command",
         });
       });
     } else {
       this.worker.postMessage({
         arguments: command.split(" "),
         totalMemory,
-        type: "command"
+        type: "command",
       });
     }
   };
@@ -155,7 +164,7 @@ export default class FFMPEGWebworkerClient extends EventEmitter {
    * @param {String | Array<String>} message
    * @return {void}
    */
-  log = message =>
+  log = (message) =>
     Array.isArray(message)
       ? console.log.call(null, message)
       : console.log(message);
@@ -164,7 +173,7 @@ export default class FFMPEGWebworkerClient extends EventEmitter {
    * @param {Blob} file
    * @return {Boolean}
    */
-  isVideo = file => {
+  isVideo = (file) => {
     const fileType = file.type;
 
     return (

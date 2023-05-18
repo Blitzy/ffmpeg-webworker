@@ -1,30 +1,29 @@
 const workerFile = () => {
-  const workerPath =
-    "https://raw.githack.com/Girilloid/ffmpeg/master/ffmpeg-all-codecs.js";
-
-  importScripts(workerPath);
-
   const now = Date.now;
 
   function print(text) {
     postMessage({ type: "stdout", data: text });
   }
 
-  onmessage = function(event) {
+  onmessage = function (event) {
     const message = event.data;
 
-    if (message.type === "command") {
+    if (message.type === "load") {
+      console.log("LOAD");
+      importScripts(message.ffmpegPath);
+      postMessage({ type: "ready" });
+    } else if (message.type === "command") {
       const Module = {
         arguments: message.arguments || [],
         files: message.files || [],
         print: print,
         printErr: print,
-        TOTAL_MEMORY: message.totalMemory || 33554432
+        TOTAL_MEMORY: message.totalMemory || 33554432,
       };
 
       postMessage({
         data: Module.arguments.join(" "),
-        type: "start"
+        type: "start",
       });
       postMessage({
         data: `Received command: ${Module.arguments.join(" ")}${
@@ -32,7 +31,7 @@ const workerFile = () => {
             ? `.  Processing with ${Module.TOTAL_MEMORY} bits.`
             : ""
         }`,
-        type: "stdout"
+        type: "stdout",
       });
 
       const time = now();
@@ -41,17 +40,15 @@ const workerFile = () => {
 
       postMessage({
         data: "Finished processing (took " + totalTime + "ms)",
-        type: "stdout"
+        type: "stdout",
       });
       postMessage({
         data: result,
         time: totalTime,
-        type: "done"
+        type: "done",
       });
     }
   };
-
-  postMessage({ type: "ready" });
 };
 
 export default workerFile;

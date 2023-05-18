@@ -10,9 +10,9 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "test": "cross-env NODE_ENV=test jest --coverage && npm run typescript",
-    "build": "npm run clean && npm run build:umd && npm run build:es",
-    "build:umd": "cross-env NODE_ENV=es rollup -c",
-    "build:es": "cross-env BABEL_ENV=es babel ./src --out-dir ./dist/es --ignore '**/*.spec.js'",
+    "build": "npm run clean && npm run build:bundle",
+    "build:bundle": "cross-env NODE_ENV=es rollup -c",
+    "serve": "serve ./test",
     "start": "styleguidist server",
     "styleguide": "styleguidist build",
     "test:watch": "cross-env NODE_ENV=test jest --watch",

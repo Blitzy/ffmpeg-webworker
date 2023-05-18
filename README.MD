@@ -176,6 +176,9 @@ ffmpeg-js and running command in a worker.
 
 Official listener for FFMPEGWebworker.
 
+Optional: Can take `ffmpegPath` argument in constructor to change where to load `ffmpeg-all-codecs.js` from.
+Will default to `https://raw.githack.com/Girilloid/ffmpeg/master/ffmpeg-all-codecs.js` if not provided.
+
 ```js static
 import { FFMPEGWebworkerClient } from 'ffmpeg-webworker';
 
