@@ -8,8 +8,7 @@ var workerFile = function workerFile() {
   }
   onmessage = function onmessage(event) {
     var message = event.data;
-    if (message.type === 'load') {
-      console.log('LOAD');
+    if (message.type === "load") {
       importScripts(message.ffmpegPath);
       postMessage({
         type: "ready"
@@ -763,7 +762,7 @@ var FFMPEGWebworkerClient = /*#__PURE__*/function (_EventEmitter) {
         }
       };
       this.worker.postMessage({
-        type: 'load',
+        type: "load",
         ffmpegPath: this.ffmpegPath
       });
     }

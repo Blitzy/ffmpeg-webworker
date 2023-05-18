@@ -9,7 +9,6 @@ const workerFile = () => {
     const message = event.data;
 
     if (message.type === "load") {
-      console.log("LOAD");
       importScripts(message.ffmpegPath);
       postMessage({ type: "ready" });
     } else if (message.type === "command") {
